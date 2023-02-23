@@ -430,9 +430,11 @@ namespace skch
                 skch::Filter::query::filterMappings(output->readMappings, n_mappings);
             }
             // hardcore merge using the chain gap
-            mergeMappingsInRange(output->readMappings, param.chain_gap);
-            if (param.filterMode == filter::MAP || param.filterMode == filter::ONETOONE) {
-                skch::Filter::query::filterMappings(output->readMappings, n_mappings);
+            if (param.mergeMappings) {
+                mergeMappingsInRange(output->readMappings, param.chain_gap);
+                if (param.filterMode == filter::MAP || param.filterMode == filter::ONETOONE) {
+                    skch::Filter::query::filterMappings(output->readMappings, n_mappings);
+                }
             }
             // remove short chains that didn't exceed block length
             filterWeakMappings(output->readMappings, std::floor(param.block_length / param.segLength));
@@ -641,7 +643,7 @@ namespace skch
               {
                 //Save <1st pos --- 2nd pos>
                 L1_candidateLocus_t candidate{it->seqId,
-                    std::max(0, it2->wpos - Q.len + 1), it->wpos};
+                    std::max<offset_t>(0, it2->wpos - Q.len + 1), it->wpos};
 
                 //Check if this candidate overlaps with last inserted one
                 auto lst = l1Mappings.end(); lst--;
