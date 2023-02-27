@@ -564,6 +564,11 @@ namespace skch
               }
           }
 
+          auto new_end = std::remove_if(Q.minimizerTableQuery.begin(), Q.minimizerTableQuery.end(), [&](auto& mi) {
+            return refSketch.isFreqSeed(mi.hash);
+          });
+          Q.minimizerTableQuery.erase(new_end, Q.minimizerTableQuery.end());
+
 #ifdef DEBUG
           std::cerr << "[wfmash::skch::Map:doL1Mapping] read id " << Q.seqCounter << ", minimizer count = " << Q.minimizerTableQuery.size() << "\n";
 #endif
