@@ -56,6 +56,9 @@ namespace skch
       //Minimizers that occur this or more times will be ignored (computed based on percentageThreshold)
       int freqThreshold = std::numeric_limits<int>::max();
 
+      //Set of frequent seeds to be ignored
+      robin_hood::unordered_set<hash_t> frequentSeeds;
+
       //Make the default constructor private, non-accessible
       Sketch();
 
@@ -114,6 +117,8 @@ namespace skch
             this->build();
             this->index();
             this->computeFreqHist();
+            this->computeFreqSeedSet();
+            this->dropFreqSeedSet();
           }
 
       private:
@@ -323,6 +328,29 @@ namespace skch
       int getFreqThreshold() const
       {
         return this->freqThreshold;
+      }
+
+      void computeFreqSeedSet()
+      {
+        for(auto &e : this->minimizerPosLookupIndex) {
+          if (e.second.size() >= this->freqThreshold) {
+            this->frequentSeeds.insert(e.first);
+          }
+        }
+      }
+
+      void dropFreqSeedSet()
+      {
+        this->minimizerIndex.erase(
+          std::remove_if(minimizerIndex.begin(), minimizerIndex.end(), [&] 
+            (auto& mi) {return this->frequentSeeds.find(mi.hash) != this->frequentSeeds.end();}
+          ), minimizerIndex.end()
+        );
+      }
+
+      bool isFreqSeed(hash_t h) const
+      {
+        return frequentSeeds.find(h) != frequentSeeds.end();
       }
 
       private:
