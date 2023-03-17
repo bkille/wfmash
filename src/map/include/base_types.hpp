@@ -128,6 +128,14 @@ namespace skch
     offset_t pos;
   };
 
+  struct KmerInfo
+  {
+    hash_t hash;
+    seqno_t seqId;
+    offset_t pos;
+    strand_t strand; 
+  };
+
   template <class T>
   inline void hash_combine(std::size_t & s, const T & v)
   {
