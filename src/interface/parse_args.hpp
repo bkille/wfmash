@@ -77,7 +77,8 @@ void parse_args(int argc,
     args::ValueFlag<float> kmer_pct_threshold(mapping_opts, "%", "ignore the top % most-frequent kmers [default: 0.001]", {'H', "kmer-threshold"});
 	args::Flag lower_triangular(mapping_opts, "", "only map shorter sequences against longer", {'L', "lower-triangular"});
     args::Flag skip_self(mapping_opts, "", "skip self mappings when the query and target name is the same (for all-vs-all mode)", {'X', "skip-self"});
-    args::ValueFlag<char> skip_prefix(mapping_opts, "C", "skip mappings when the query and target have the same prefix before the last occurrence of the given character C", {'Y', "skip-prefix"});
+    args::ValueFlag<char> prefix_delim(mapping_opts, "C", "skip mappings when the query and target have the same prefix before the last occurrence of the given character C (default '#')", {'Y', "prefix-delim"});
+    args::Flag no_prefix_grouping(mapping_opts, "", "Don't group sequences by their prefix. Will look for the best n mappings over all sequences instead of best n mappings in each prefix group.", {'4', "no-prefix-grouping"});
 	args::ValueFlag<std::string> target_prefix(mapping_opts, "pfx", "use only targets whose name starts with this prefix", {'P', "target-prefix"});
 	args::ValueFlag<std::string> target_list(mapping_opts, "FILE", "file containing list of target sequence names to use", {'A', "target-list"});
     args::Flag approx_mapping(mapping_opts, "approx-map", "skip base-level alignment, producing an approximate mapping in PAF", {'m',"approx-map"});
@@ -182,12 +183,14 @@ void parse_args(int argc,
 		map_parameters.lower_triangular = false;
 	}
 
-    if (skip_prefix) {
-        map_parameters.skip_prefix = true;
-        map_parameters.prefix_delim = args::get(skip_prefix);
-    } else {
+    map_parameters.skip_prefix = true;
+    map_parameters.prefix_delim = '#';
+    if (prefix_delim) {
+        map_parameters.prefix_delim = args::get(prefix_delim);
+    }
+    if (no_prefix_grouping)
+    {
         map_parameters.skip_prefix = false;
-        map_parameters.prefix_delim = '\0';
     }
 
 	if (target_list) {
