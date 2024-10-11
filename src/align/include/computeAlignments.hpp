@@ -49,16 +49,16 @@ struct seq_record_t {
     std::string mappingRecordLine;
     std::string refSequence;  
     std::string querySequence;
-    uint64_t refStartPos;
-    uint64_t refLen;
-    uint64_t refTotalLength;
-    uint64_t queryStartPos;
-    uint64_t queryLen;
-    uint64_t queryTotalLength;
+    int64_t refStartPos;
+    int64_t refLen;
+    int64_t refTotalLength;
+    int64_t queryStartPos;
+    int64_t queryLen;
+    int64_t queryTotalLength;
 
     seq_record_t(const MappingBoundaryRow& c, const std::string& r, 
-                 const std::string& ref, uint64_t refStart, uint64_t refLength, uint64_t refTotalLength,
-                 const std::string& query, uint64_t queryStart, uint64_t queryLength, uint64_t queryTotalLength)
+                 const std::string& ref, int64_t refStart, int64_t refLength, int64_t refTotalLength,
+                 const std::string& query, int64_t queryStart, int64_t queryLength, int64_t queryTotalLength)
         : currentRecord(c)
         , mappingRecordLine(r)
         , refSequence(ref)
@@ -194,9 +194,9 @@ seq_record_t* createSeqRecord(const MappingBoundaryRow& currentRecord,
     const int64_t query_size = faidx_seq_len(query_faidx, currentRecord.qId.c_str());
 
     // Compute padding
-    const uint64_t head_padding = currentRecord.rStartPos >= param.wflign_max_len_minor
+    const int64_t head_padding = currentRecord.rStartPos >= param.wflign_max_len_minor
         ? param.wflign_max_len_minor : currentRecord.rStartPos;
-    const uint64_t tail_padding = ref_size - currentRecord.rEndPos >= param.wflign_max_len_minor
+    const int64_t tail_padding = ref_size - currentRecord.rEndPos >= param.wflign_max_len_minor
         ? param.wflign_max_len_minor : ref_size - currentRecord.rEndPos;
 
     // Extract reference sequence
@@ -383,7 +383,7 @@ void processor_manager(seq_atomic_queue_t& seq_queue,
     // Start with one processor
     spawn_processor(0);
     size_t current_processors = 1;
-    uint64_t exhausted = 0;
+    int64_t exhausted = 0;
 
     while (!reader_done.load() || !line_queue.was_empty() || !seq_queue.was_empty()) {
         size_t queue_size = seq_queue.was_size();
@@ -416,14 +416,14 @@ void processor_manager(seq_atomic_queue_t& seq_queue,
     processor_done.store(true);
 }
 
-void worker_thread(uint64_t tid,
+void worker_thread(int64_t tid,
                    std::atomic<bool>& is_working,
                    seq_atomic_queue_t& seq_queue,
                    paf_atomic_queue_t& paf_queue,
                    std::atomic<bool>& reader_done,
                    std::atomic<bool>& processor_done,
                    progress_meter::ProgressMeter& progress,
-                   std::atomic<uint64_t>& processed_alignment_length) {
+                   std::atomic<int64_t>& processed_alignment_length) {
     is_working.store(true);
     while (true) {
         seq_record_t* rec = nullptr;
@@ -435,7 +435,7 @@ void worker_thread(uint64_t tid,
             paf_queue.push(new std::string(std::move(alignment_output)));
             
             // Update progress meter and processed alignment length
-            uint64_t alignment_length = rec->currentRecord.qEndPos - rec->currentRecord.qStartPos;
+            int64_t alignment_length = rec->currentRecord.qEndPos - rec->currentRecord.qStartPos;
             progress.increment(alignment_length);
             processed_alignment_length.fetch_add(alignment_length, std::memory_order_relaxed);
             
@@ -461,7 +461,7 @@ void write_sam_header(std::ofstream& outstream) {
             while (std::getline(in, line)) {
                 auto line_split = skch::CommonFunc::split(line, '\t');
                 const std::string seq_name = line_split[0];
-                const uint64_t seq_len = std::stoull(line_split[1]);
+                const int64_t seq_len = std::stoull(line_split[1]);
                 outstream << "@SQ\tSN:" << seq_name << "\tLN:" << seq_len << "\n";
             }
         } else {
@@ -528,7 +528,7 @@ void computeAlignments() {
     size_t max_processors = std::max(1UL, static_cast<unsigned long>(param.threads));
 
     // Calculate total alignment length
-    uint64_t total_alignment_length = 0;
+    int64_t total_alignment_length = 0;
     {
         std::ifstream mappingListStream(param.mashmapPafFile);
         std::string mappingRecordLine;
@@ -546,7 +546,7 @@ void computeAlignments() {
     progress_meter::ProgressMeter progress(total_alignment_length, "[wfmash::align::computeAlignments] aligned");
 
     // Create atomic counter for processed alignment length
-    std::atomic<uint64_t> processed_alignment_length(0);
+    std::atomic<int64_t> processed_alignment_length(0);
 
     // Start timing
     auto start_time = std::chrono::high_resolution_clock::now();
@@ -564,7 +564,7 @@ void computeAlignments() {
     // Launch worker threads
     std::vector<std::thread> workers;
     std::vector<std::atomic<bool>> worker_working(param.threads);
-    for (uint64_t t = 0; t < param.threads; ++t) {
+    for (int64_t t = 0; t < param.threads; ++t) {
         workers.emplace_back([this, t, &worker_working, &seq_queue, &paf_queue, &reader_done, &processor_done, &progress, &processed_alignment_length]() {
             this->worker_thread(t, worker_working[t], seq_queue, paf_queue, reader_done, processor_done, progress, processed_alignment_length);
         });

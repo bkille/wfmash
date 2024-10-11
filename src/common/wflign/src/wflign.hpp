@@ -37,7 +37,7 @@ namespace wflign {
         class WFlign {
         public:
             // WFlambda parameters
-            uint16_t segment_length;
+            int16_t segment_length;
             float min_identity;
             int _minhash_kmer_size;
 
@@ -59,8 +59,8 @@ namespace wflign {
             float wflign_max_mash_dist;
             int wflign_min_wavefront_length;
             int wflign_max_distance_threshold;
-            uint64_t wflign_max_len_major;
-            uint64_t wflign_max_len_minor;
+            int64_t wflign_max_len_major;
+            int64_t wflign_max_len_minor;
             int erode_k;
             int64_t chain_gap;
             int min_inversion_length;
@@ -68,16 +68,16 @@ namespace wflign {
             // Query
             const std::string* query_name;
             char* query;
-            uint64_t query_total_length;
-            uint64_t query_offset;
-            uint64_t query_length;
+            int64_t query_total_length;
+            int64_t query_offset;
+            int64_t query_length;
             bool query_is_rev;
             // Target
             const std::string* target_name;
             char* target;
-            uint64_t target_total_length;
-            uint64_t target_offset;
-            uint64_t target_length;
+            int64_t target_total_length;
+            int64_t target_offset;
+            int64_t target_length;
             // Output
             std::ostream* out;
 #ifdef WFA_PNG_TSV_TIMING
@@ -95,7 +95,7 @@ namespace wflign {
             bool force_biwfa_alignment;
             // Setup
             WFlign(
-                    const uint16_t segment_length,
+                    const int16_t segment_length,
                     const float min_identity,
                     const bool force_biwfa_alignment,
                     const int wfa_mismatch_score,
@@ -113,8 +113,8 @@ namespace wflign {
                     const float wflign_max_mash_dist,
                     const int wflign_min_wavefront_length,
                     const int wflign_max_distance_threshold,
-                    const uint64_t wflign_max_len_major,
-                    const uint64_t wflign_max_len_minor,
+                    const int64_t wflign_max_len_major,
+                    const int64_t wflign_max_len_minor,
                     const int erode_k,
                     const int64_t chain_gap,
                     const int min_inversion_length,
@@ -138,15 +138,15 @@ namespace wflign {
             void wflign_affine_wavefront(
                     const std::string& query_name,
                     char* const query,
-                    const uint64_t query_total_length,
-                    const uint64_t query_offset,
-                    const uint64_t query_length,
+                    const int64_t query_total_length,
+                    const int64_t query_offset,
+                    const int64_t query_length,
                     const bool query_is_rev,
                     const std::string& target_name,
                     char* const target,
-                    const uint64_t target_total_length,
-                    const uint64_t target_offset,
-                    const uint64_t target_length);
+                    const int64_t target_total_length,
+                    const int64_t target_offset,
+                    const int64_t target_length);
         };
 
     } /* namespace wavefront */
@@ -162,8 +162,8 @@ typedef struct {
     // Parameters
     int pattern_length;
     int text_length;
-    uint16_t step_size;
-    uint16_t segment_length_to_use;
+    int16_t step_size;
+    int16_t segment_length_to_use;
     int minhash_kmer_size;
     float max_mash_dist_to_evaluate;
     float mash_sketch_rate;
@@ -181,12 +181,12 @@ typedef struct {
 //    wflign_penalties_t* wfa_affine_penalties;
     // Stats
 #ifdef WFA_PNG_TSV_TIMING
-    uint64_t num_alignments;
-    uint64_t num_alignments_performed;
+    int64_t num_alignments;
+    int64_t num_alignments_performed;
 #endif
     // For performance improvements
-    uint64_t max_num_sketches_in_memory;
-    uint64_t num_sketches_allocated;
+    int64_t max_num_sketches_in_memory;
+    int64_t num_sketches_allocated;
 #ifdef WFA_PNG_TSV_TIMING
     // wfplot
     bool emit_png;

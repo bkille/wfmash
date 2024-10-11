@@ -290,15 +290,15 @@ bool validate_cigar(
         const wflign_cigar_t& cigar,
         const char* query,
         const char* target,
-        const uint64_t& query_aln_len,
-        const uint64_t& target_aln_len,
-        uint64_t j,
-        uint64_t i) {
+        const int64_t& query_aln_len,
+        const int64_t& target_aln_len,
+        int64_t j,
+        int64_t i) {
     // check that our cigar matches where it claims it does
     const int start_idx = cigar.begin_offset;
     const int end_idx = cigar.end_offset;
-    const uint64_t j_max = j + query_aln_len;
-    const uint64_t i_max = i + target_aln_len;
+    const int64_t j_max = j + query_aln_len;
+    const int64_t i_max = i + target_aln_len;
     bool ok = true;
     // std::cerr << "start to end " << start_idx << " " << end_idx << std::endl;
     for (int c = start_idx; c < end_idx; c++) {
@@ -344,15 +344,15 @@ bool validate_trace(
         std::vector<char>& tracev,
         const char* query,
         const char* target,
-        const uint64_t& query_aln_len,
-        const uint64_t& target_aln_len,
-        uint64_t j,
-        uint64_t i) {
+        const int64_t& query_aln_len,
+        const int64_t& target_aln_len,
+        int64_t j,
+        int64_t i) {
     // check that our cigar matches where it claims it does
     const int start_idx = 0;
     const int end_idx = tracev.size();
-    const uint64_t j_max = j + query_aln_len;
-    const uint64_t i_max = i + target_aln_len;
+    const int64_t j_max = j + query_aln_len;
+    const int64_t i_max = i + target_aln_len;
     bool ok = true;
     //std::cerr << "start to end " << start_idx << " " << end_idx << std::endl;
     //std::cerr << "j_max " << j_max << " - i_max " << i_max << std::endl;
@@ -426,16 +426,16 @@ bool validate_trace(
  */
 char* alignment_to_cigar(
         const std::vector<char>& edit_cigar,
-        const uint64_t& start_idx,
-        const uint64_t& end_idx,
-        uint64_t& target_aligned_length,
-        uint64_t& query_aligned_length,
-        uint64_t& matches,
-        uint64_t& mismatches,
-        uint64_t& insertions,
-        uint64_t& inserted_bp,
-        uint64_t& deletions,
-        uint64_t& deleted_bp) {
+        const int64_t& start_idx,
+        const int64_t& end_idx,
+        int64_t& target_aligned_length,
+        int64_t& query_aligned_length,
+        int64_t& matches,
+        int64_t& mismatches,
+        int64_t& insertions,
+        int64_t& inserted_bp,
+        int64_t& deletions,
+        int64_t& deleted_bp) {
     // the edit cigar contains a character string of ops
     // here we compress them into the standard cigar representation
 
@@ -504,14 +504,14 @@ char* alignment_to_cigar(
 }
 char* wfa_alignment_to_cigar(
         const wflign_cigar_t* const edit_cigar,
-        uint64_t& target_aligned_length,
-        uint64_t& query_aligned_length,
-        uint64_t& matches,
-        uint64_t& mismatches,
-        uint64_t& insertions,
-        uint64_t& inserted_bp,
-        uint64_t& deletions,
-        uint64_t& deleted_bp) {
+        int64_t& target_aligned_length,
+        int64_t& query_aligned_length,
+        int64_t& matches,
+        int64_t& mismatches,
+        int64_t& insertions,
+        int64_t& inserted_bp,
+        int64_t& deletions,
+        int64_t& deleted_bp) {
     // the edit cigar contains a character string of ops
     // here we compress them into the standard cigar representation
 
@@ -588,15 +588,15 @@ bool unpack_display_cigar(
         const wflign_cigar_t& cigar,
         const char* query,
         const char* target,
-        const uint64_t query_aln_len,
-        const uint64_t target_aln_len,
-        uint64_t j,
-        uint64_t i) {
+        const int64_t query_aln_len,
+        const int64_t target_aln_len,
+        int64_t j,
+        int64_t i) {
     // check that our cigar matches where it claims it does
     const int start_idx = cigar.begin_offset;
     const int end_idx = cigar.end_offset;
-    const uint64_t j_max = j + query_aln_len;
-    const uint64_t i_max = i + target_aln_len;
+    const int64_t j_max = j + query_aln_len;
+    const int64_t i_max = i + target_aln_len;
     // std::cerr << "start to end " << start_idx << " " << end_idx << std::endl;
     for (int c = start_idx; c < end_idx; c++) {
         // if new sequence of same moves started
@@ -734,12 +734,12 @@ std::ostream& operator<<(std::ostream& os, const alignment_t& aln) {
 /*
 // No more necessary
 bool hack_cigar(wfa::cigar_t &cigar, const char *query, const char *target,
-                const uint64_t &query_aln_len, const uint64_t &target_aln_len,
-                uint64_t j, uint64_t i) {
+                const int64_t &query_aln_len, const int64_t &target_aln_len,
+                int64_t j, int64_t i) {
     const int start_idx = cigar.begin_offset;
     const int end_idx = cigar.end_offset;
-    const uint64_t j_max = j + query_aln_len;
-    const uint64_t i_max = i + target_aln_len;
+    const int64_t j_max = j + query_aln_len;
+    const int64_t i_max = i + target_aln_len;
     bool ok = true;
     // std::cerr << "start to end " << start_idx << " " << end_idx << std::endl;
     for (int c = start_idx; c < end_idx; c++) {

@@ -14,7 +14,7 @@
 
 namespace skch
 {
-  typedef uint64_t hash_t;    //hash type
+  typedef int64_t hash_t;    //hash type
   typedef int64_t offset_t;   //position within sequence
   typedef int32_t seqno_t;    //sequence counter in file
   typedef int16_t strand_t;   //sequence strand 
@@ -171,7 +171,7 @@ namespace skch
     long double kmerComplexity;                               // Estimated sequence complexity
     int n_merged;                                       // how many mappings we've merged into this one
     offset_t splitMappingId;                            // To identify split mappings that are chained
-    uint8_t discard;                                    // set to 1 for deletion
+    int8_t discard;                                    // set to 1 for deletion
     bool overlapped;                                    // set to true if this mapping is overlapped with another mapping
     bool selfMapFilter;                                 // set to true if a long-to-short mapping in all-vs-all mode (we report short as the query)
     double chainPairScore;                              // best score for potential chain pair

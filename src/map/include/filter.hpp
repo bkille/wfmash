@@ -296,7 +296,7 @@ namespace skch
        *                                 until we only have secondaryToKeep secondary mappings
        */
       template <typename VecIn>
-      void filterMappings(VecIn &readMappings, uint16_t secondaryToKeep, bool dropRand, double overlapThreshold)
+      void filterMappings(VecIn &readMappings, int16_t secondaryToKeep, bool dropRand, double overlapThreshold)
       {
           //Apply the main filtering algorithm to ensure the best mappings across complete axis
           liFilterAlgorithm(readMappings, secondaryToKeep, dropRand, overlapThreshold);
@@ -464,7 +464,7 @@ namespace skch
        * @param[in]     refsketch     reference index class object, used to determine ref sequence lengths
        */
       template <typename VecIn>
-      void filterMappings(VecIn &readMappings, const skch::Sketch &refsketch, uint16_t secondaryToKeep, bool dropRand, double overlapThreshold)
+      void filterMappings(VecIn &readMappings, const skch::Sketch &refsketch, int16_t secondaryToKeep, bool dropRand, double overlapThreshold)
         {
           if(readMappings.size() <= 1)
             return;

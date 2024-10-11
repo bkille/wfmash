@@ -62,7 +62,7 @@ namespace skch
       const skch::Parameters &param;
 
       //Minmers that occur this or more times will be ignored (computed based on percentageThreshold)
-      uint64_t freqThreshold = std::numeric_limits<uint64_t>::max();
+      int64_t freqThreshold = std::numeric_limits<int64_t>::max();
 
       //Set of frequent seeds to be ignored
       ankerl::unordered_dense::set<hash_t> frequentSeeds;
@@ -74,7 +74,7 @@ namespace skch
 
       using MI_Type = std::vector< MinmerInfo >;
       using MIIter_t = MI_Type::const_iterator;
-      using HF_Map_t = ankerl::unordered_dense::map<hash_t, uint64_t>;
+      using HF_Map_t = ankerl::unordered_dense::map<hash_t, int64_t>;
 
       // Frequency of each hash
       HF_Map_t hashFreq;
@@ -115,7 +115,7 @@ namespace skch
 
       //Frequency histogram of minmers
       //[... ,x -> y, ...] implies y number of minmers occur x times
-      std::map<uint64_t, uint64_t> minmerFreqHistogram;
+      std::map<int64_t, int64_t> minmerFreqHistogram;
 
       public:
 
@@ -526,7 +526,7 @@ namespace skch
                   }
               }
 
-              if (this->freqThreshold != std::numeric_limits<uint64_t>::max())
+              if (this->freqThreshold != std::numeric_limits<int64_t>::max())
                   std::cerr << "[mashmap::skch::Sketch::computeFreqHist] With threshold " << this->param.kmer_pct_threshold
                             << "\%, ignore minmers with more than >= " << this->freqThreshold << " interval points during mapping."
                             << std::endl;

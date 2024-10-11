@@ -40,7 +40,7 @@ void clean_up_sketches(std::vector<std::vector<rkmh::hash_t>*> &sketches) {
 * Setup
 */
 WFlign::WFlign(
-    const uint16_t segment_length,
+    const int16_t segment_length,
     const float min_identity,
     const bool force_biwfa_alignment,
     const int wfa_mismatch_score,
@@ -58,8 +58,8 @@ WFlign::WFlign(
     const float wflign_max_mash_dist,
     const int wflign_min_wavefront_length,
     const int wflign_max_distance_threshold,
-    const uint64_t wflign_max_len_major,
-    const uint64_t wflign_max_len_minor,
+    const int64_t wflign_max_len_major,
+    const int64_t wflign_max_len_minor,
     const int erode_k,
     const int64_t chain_gap,
     const int min_inversion_length,
@@ -130,7 +130,7 @@ void WFlign::set_output(
     const bool emit_tsv,
     std::ostream* const out_tsv,
     const std::string &wfplot_filepath,
-    const uint64_t wfplot_max_size,
+    const int64_t wfplot_max_size,
     const bool emit_patching_tsv,
     std::ostream* const out_patching_tsv,
 #endif
@@ -163,8 +163,8 @@ int wflambda_extend_match(
     wflign_extend_data_t* extend_data = (wflign_extend_data_t*)arguments;
     // Expand arguments
     const WFlign& wflign = *(extend_data->wflign);
-    const uint64_t query_length = wflign.query_length;
-    const uint64_t target_length = wflign.target_length;
+    const int64_t query_length = wflign.query_length;
+    const int64_t target_length = wflign.target_length;
     const int step_size = extend_data->step_size;
     const int segment_length_to_use = extend_data->segment_length_to_use;
     const int pattern_length = extend_data->pattern_length;
@@ -189,9 +189,9 @@ int wflambda_extend_match(
             const int64_t target_begin = h * step_size;
 
             // The last fragment can be longer than segment_length_to_use (max 2*segment_length_to_use - 1)
-            const uint16_t segment_length_to_use_q =
+            const int16_t segment_length_to_use_q =
                     (v == pattern_length - 1) ? query_length - query_begin : segment_length_to_use;
-            const uint16_t segment_length_to_use_t =
+            const int16_t segment_length_to_use_t =
                     (h == text_length - 1) ? target_length - target_begin : segment_length_to_use;
 
             auto *aln = new alignment_t();
@@ -303,15 +303,15 @@ int wflambda_trace_match(
 void WFlign::wflign_affine_wavefront(
     const std::string& query_name,
     char* const query,
-    const uint64_t query_total_length,
-    const uint64_t query_offset,
-    const uint64_t query_length,
+    const int64_t query_total_length,
+    const int64_t query_offset,
+    const int64_t query_length,
     const bool query_is_rev,
     const std::string& target_name,
     char* const target,
-    const uint64_t target_total_length,
-    const uint64_t target_offset,
-    const uint64_t target_length) {
+    const int64_t target_total_length,
+    const int64_t target_offset,
+    const int64_t target_length) {
     // Set query
     this->query_name = &query_name;
     this->query = query;
@@ -569,14 +569,14 @@ void WFlign::wflign_affine_wavefront(
         }
 #endif
 
-        const uint16_t segment_length_to_use =
+        const int16_t segment_length_to_use =
                 (query_length < segment_length || target_length < segment_length)
                 ? std::min(query_length, target_length)
                 : segment_length;
 
         // set up our implicit matrix
-        const uint8_t steps_per_segment = 2;
-        const uint16_t step_size = segment_length_to_use / steps_per_segment;
+        const int8_t steps_per_segment = 2;
+        const int16_t step_size = segment_length_to_use / steps_per_segment;
 
         // If the query_length/target_length are not multiple of step_size, we count
         // a fragment less, and the last one will be longer than segment_length_to_use

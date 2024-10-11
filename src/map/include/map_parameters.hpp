@@ -19,10 +19,10 @@ namespace skch
 
 
 struct ales_params {
-  uint32_t weight{} ;
-  uint32_t seed_count{};
+  int32_t weight{} ;
+  int32_t seed_count{};
   float similarity{};
-  uint32_t region_length{};
+  int32_t region_length{};
 };
 
 /**
@@ -37,7 +37,7 @@ struct Parameters
                                                       //for noSplit, it represents minimum read length to multimap
     offset_t block_length;                             // minimum (potentially merged) block to keep if we aren't split
     offset_t chain_gap;                                // max distance for 2d range union-find mapping chaining
-    uint64_t max_mapping_length;                      // maximum length of a mapping
+    int64_t max_mapping_length;                      // maximum length of a mapping
     int alphabetSize;                                 //alphabet size
     offset_t referenceSize;                           //Approximate reference size
     float percentageIdentity;                         //user defined threshold for good similarity
@@ -46,8 +46,8 @@ struct Parameters
     float ANIDiff;                                    //ANI distance threshold below best mapping to retain in stage 1 filtering
     float ANIDiffConf;                                //Confidence of stage 1 ANI filtering threshold
     int filterMode;                                   //filtering mode in mashmap
-    uint32_t numMappingsForSegment;                   //how many mappings to retain for each segment
-    uint32_t numMappingsForShortSequence;             //how many secondary alignments we keep for reads < segLength
+    int32_t numMappingsForSegment;                   //how many mappings to retain for each segment
+    int32_t numMappingsForShortSequence;             //how many secondary alignments we keep for reads < segLength
     bool dropRand;                                    //drop mappings w/ same score until only numMappingsForSegment remain
     int threads;                                      //execution thread count
     std::vector<std::string> refSequences;            //reference sequence(s)
@@ -78,7 +78,7 @@ struct Parameters
     double spaced_seed_sensitivity;                   //
     std::vector<ales::spaced_seed> spaced_seeds;      //
     bool world_minimizers;
-    uint64_t sparsity_hash_threshold;                 // keep mappings that hash to <= this value
+    int64_t sparsity_hash_threshold;                 // keep mappings that hash to <= this value
     double overlap_threshold;                         // minimum overlap for a mapping to be considered
 
     bool legacy_output;

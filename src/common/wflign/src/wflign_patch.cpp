@@ -27,16 +27,16 @@ bool do_wfa_segment_alignment(
         const std::string& query_name,
         const char* query,
         std::vector<rkmh::hash_t>*& query_sketch,
-        const uint64_t& query_length,
+        const int64_t& query_length,
         const int64_t& j,
         const std::string& target_name,
         const char* target,
         std::vector<rkmh::hash_t>*& target_sketch,
-        const uint64_t& target_length,
+        const int64_t& target_length,
         const int64_t& i,
-        const uint16_t& segment_length_q,
-        const uint16_t& segment_length_t,
-        const uint16_t& step_size,
+        const int16_t& segment_length_q,
+        const int16_t& segment_length_t,
+        const int16_t& step_size,
         wflign_extend_data_t* extend_data,
         alignment_t& aln) {
 
@@ -51,13 +51,13 @@ bool do_wfa_segment_alignment(
     if (query_sketch == nullptr) {
         query_sketch = new std::vector<rkmh::hash_t>();
         *query_sketch = rkmh::hash_sequence(
-                query + j, segment_length_q, extend_data->minhash_kmer_size, (uint64_t)((float)segment_length_q * extend_data->mash_sketch_rate));
+                query + j, segment_length_q, extend_data->minhash_kmer_size, (int64_t)((float)segment_length_q * extend_data->mash_sketch_rate));
         ++extend_data->num_sketches_allocated;
     }
     if (target_sketch == nullptr) {
         target_sketch = new std::vector<rkmh::hash_t>();        
         *target_sketch = rkmh::hash_sequence(
-                target + i, segment_length_t, extend_data->minhash_kmer_size, (uint64_t)((float)segment_length_t * extend_data->mash_sketch_rate));
+                target + i, segment_length_t, extend_data->minhash_kmer_size, (int64_t)((float)segment_length_t * extend_data->mash_sketch_rate));
         ++extend_data->num_sketches_allocated;
     }
 
@@ -130,18 +130,18 @@ bool do_wfa_segment_alignment(
 
 void do_wfa_patch_alignment(
         const char* query,
-        const uint64_t& j,
-        const uint64_t& query_length,
+        const int64_t& j,
+        const int64_t& query_length,
         const char* target,
-        const uint64_t& i,
-        const uint64_t& target_length,
+        const int64_t& i,
+        const int64_t& target_length,
         wfa::WFAlignerGapAffine2Pieces& wf_aligner,
         const wflign_penalties_t& convex_penalties,
         alignment_t& aln,
         alignment_t& rev_aln,
         const int64_t& chain_gap,
         const int& max_patching_score,
-        const uint64_t& min_inversion_length) {
+        const int64_t& min_inversion_length) {
 
     const int max_score =
         max_patching_score ? max_patching_score :
@@ -567,25 +567,25 @@ void trim_alignment(alignment_t& aln) {
         
 std::vector<alignment_t> do_progressive_wfa_patch_alignment(
     const char* query,
-    const uint64_t& query_start,
-    const uint64_t& query_length,
+    const int64_t& query_start,
+    const int64_t& query_length,
     const char* target,
-    const uint64_t& target_start,
-    const uint64_t& target_length,
+    const int64_t& target_start,
+    const int64_t& target_length,
     wfa::WFAlignerGapAffine2Pieces& wf_aligner,
     const wflign_penalties_t& convex_penalties,
     const int64_t& chain_gap,
     const int& max_patching_score,
-    const uint64_t& min_inversion_length,
+    const int64_t& min_inversion_length,
     const int& erode_k) {
 
     std::vector<alignment_t> alignments;
-    uint64_t current_query_start = query_start;
-    uint64_t current_target_start = target_start;
-    uint64_t remaining_query_length = query_length;
-    uint64_t remaining_target_length = target_length;
-    const uint64_t query_end = query_start + query_length;
-    const uint64_t target_end = target_start + target_length;
+    int64_t current_query_start = query_start;
+    int64_t current_target_start = target_start;
+    int64_t remaining_query_length = query_length;
+    int64_t remaining_target_length = target_length;
+    const int64_t query_end = query_start + query_length;
+    const int64_t target_end = target_start + target_length;
 
     //std::cerr << "BEGIN do_progressive_wfa_patch_alignment: " << current_query_start << " " << remaining_query_length << " " << current_target_start << " " << remaining_target_length << std::endl;
     bool first = true;
@@ -690,13 +690,13 @@ std::vector<alignment_t> do_progressive_wfa_patch_alignment(
         // if there is, we should align the largest possible region that is still incomplete
         /// ....
         // Calculate the sizes of unaligned regions using only the bounds
-        uint64_t left_query_size = bounds.query_start_offset;
-        uint64_t right_query_size = remaining_query_length > bounds.query_end_offset ? remaining_query_length - bounds.query_end_offset : 0;
-        uint64_t left_target_size = bounds.target_start_offset;
-        uint64_t right_target_size = remaining_target_length > bounds.target_end_offset ? remaining_target_length - bounds.target_end_offset : 0;
+        int64_t left_query_size = bounds.query_start_offset;
+        int64_t right_query_size = remaining_query_length - bounds.query_end_offset;
+        int64_t left_target_size = bounds.target_start_offset;
+        int64_t right_target_size = remaining_target_length - bounds.target_end_offset;
 
-        uint64_t max_left_size = std::max(left_query_size, left_target_size);
-        uint64_t max_right_size = std::max(right_query_size, right_target_size);
+        int64_t max_left_size = std::max(left_query_size, left_target_size);
+        int64_t max_right_size = std::max(right_query_size, right_target_size);
 
         //std::cerr << "left_query_size: " << left_query_size << " left_target_size: " << left_target_size << std::endl
         //          << "right_query_size: " << right_query_size << " right_target_size: " << right_target_size << std::endl
@@ -721,10 +721,10 @@ std::vector<alignment_t> do_progressive_wfa_patch_alignment(
     return alignments;
 }
 
-void erode_head(std::vector<char>& unpatched, uint64_t& query_pos, uint64_t& target_pos, int erode_k) {
+void erode_head(std::vector<char>& unpatched, int64_t& query_pos, int64_t& target_pos, int erode_k) {
     int match_count = 0;
     auto it = unpatched.begin();
-    uint64_t query_erased = 0, target_erased = 0;
+    int64_t query_erased = 0, target_erased = 0;
 
     while (it != unpatched.end()) {
         if (*it == 'M' || *it == 'X') {
@@ -755,10 +755,10 @@ void erode_head(std::vector<char>& unpatched, uint64_t& query_pos, uint64_t& tar
     unpatched.erase(unpatched.begin(), it);
 }
 
-void erode_tail(std::vector<char>& unpatched, uint64_t& query_end, uint64_t& target_end, int erode_k) {
+void erode_tail(std::vector<char>& unpatched, int64_t& query_end, int64_t& target_end, int erode_k) {
     int match_count = 0;
     auto it = unpatched.rbegin();
-    uint64_t q_offset = 0, t_offset = 0;
+    int64_t q_offset = 0, t_offset = 0;
 
     while (it != unpatched.rend()) {
         if (*it == 'M' || *it == 'X') {
@@ -793,33 +793,33 @@ void write_merged_alignment(
         const bool& no_seq_in_sam,
         const char* query,
         const std::string& query_name,
-        const uint64_t& query_total_length,
-        const uint64_t& query_offset,
-        const uint64_t& query_length,
+        const int64_t& query_total_length,
+        const int64_t& query_offset,
+        const int64_t& query_length,
         const bool& query_is_rev,
         const char* _target,
         const std::string& target_name,
-        const uint64_t& target_total_length,
-        const uint64_t& _target_offset,
-        const uint64_t& _target_length,
+        const int64_t& target_total_length,
+        const int64_t& _target_offset,
+        const int64_t& _target_length,
         const float& min_identity,
 #ifdef WFA_PNG_TSV_TIMING
         const long& elapsed_time_wflambda_ms,
-        const uint64_t& num_alignments,
-        const uint64_t& num_alignments_performed,
+        const int64_t& num_alignments,
+        const int64_t& num_alignments_performed,
 #endif
         const float& mashmap_estimated_identity,
-        const uint64_t& wflign_max_len_major,
-        const uint64_t& wflign_max_len_minor,
+        const int64_t& wflign_max_len_major,
+        const int64_t& wflign_max_len_minor,
         const int& erode_k,
         const int64_t& chain_gap,
         const int& max_patching_score,
-        const uint64_t& min_inversion_length,
+        const int64_t& min_inversion_length,
         const int& min_wf_length,
         const int& max_dist_threshold,
 #ifdef WFA_PNG_TSV_TIMING
         const std::string* prefix_wavefront_plot_in_png,
-        const uint64_t& wfplot_max_size,
+        const int64_t& wfplot_max_size,
         const bool& emit_patching_tsv,
         std::ostream* out_patching_tsv,
 #endif
@@ -833,26 +833,26 @@ void write_merged_alignment(
     // our final cigar
     //
     // std::string cigarstr;
-    uint64_t matches = 0;
-    uint64_t mismatches = 0;
-    uint64_t insertions = 0;
-    uint64_t inserted_bp = 0;
-    uint64_t deletions = 0;
-    uint64_t deleted_bp = 0;
-    uint64_t query_start = 0;
-    uint64_t target_start = 0;
-    uint64_t total_query_aligned_length = 0;
-    uint64_t total_target_aligned_length = 0;
-    uint64_t query_end = 0;
-    uint64_t target_end = 0;
-    //uint64_t total_score = 0;
+    int64_t matches = 0;
+    int64_t mismatches = 0;
+    int64_t insertions = 0;
+    int64_t inserted_bp = 0;
+    int64_t deletions = 0;
+    int64_t deleted_bp = 0;
+    int64_t query_start = 0;
+    int64_t target_start = 0;
+    int64_t total_query_aligned_length = 0;
+    int64_t total_target_aligned_length = 0;
+    int64_t query_end = 0;
+    int64_t target_end = 0;
+    //int64_t total_score = 0;
 
     char* target = (char*)_target;
-    uint64_t target_offset = _target_offset;
-    uint64_t target_length = _target_length;
+    int64_t target_offset = _target_offset;
+    int64_t target_length = _target_length;
 
     // double mash_dist_sum = 0;
-    uint64_t ok_alns = 0;
+    int64_t ok_alns = 0;
 
     auto start_time = std::chrono::steady_clock::now();
 
@@ -874,10 +874,10 @@ void write_merged_alignment(
 
 #define MAX_NUM_INDELS_TO_LOOK_AT 2
         auto distance_close_big_enough_indels =	
-                [](const uint32_t indel_len, auto iterator,	
+                [](const int32_t indel_len, auto iterator,	
                    const std::vector<char> &trace,
-                   const uint16_t&max_dist_to_look_at) {	
-                    const uint32_t min_indel_len_to_find = indel_len / 3;	
+                   const int16_t&max_dist_to_look_at) {	
+                    const int32_t min_indel_len_to_find = indel_len / 3;	
 
                     // std::cerr << "min_indel_len_to_find " <<	
                     // min_indel_len_to_find << std::endl; std::cerr <<	
@@ -885,8 +885,8 @@ void write_merged_alignment(
 
                     auto q = iterator;	
 
-                    uint8_t num_indels_to_find = MAX_NUM_INDELS_TO_LOOK_AT;	
-                    uint32_t curr_size_close_indel = 0;	
+                    int8_t num_indels_to_find = MAX_NUM_INDELS_TO_LOOK_AT;	
+                    int32_t curr_size_close_indel = 0;	
                     int32_t dist_close_indels = 0;	
 
                     // std::cerr << "indel_len " << indel_len << std::endl;	
@@ -906,7 +906,7 @@ void write_merged_alignment(
                         // curr_size_close_indel << std::endl;	
                         if (curr_size_close_indel >= min_indel_len_to_find) {	
                             // std::cerr << "\t\tnum_indels_to_find " <<	
-                            // (uint16_t)num_indels_to_find << std::endl;	
+                            // (int16_t)num_indels_to_find << std::endl;	
                             if (--num_indels_to_find == 0) {	
                                 break;	
                             }	
@@ -947,23 +947,23 @@ void write_merged_alignment(
 #endif
             ](std::vector<char> &unpatched,
               std::vector<char> &patched,
-              const uint16_t &min_wfa_head_tail_patch_length,
-              const uint16_t &min_wfa_patch_length,
-              const uint16_t &max_dist_to_look_at,
+              const int16_t &min_wfa_head_tail_patch_length,
+              const int16_t &min_wfa_patch_length,
+              const int16_t &max_dist_to_look_at,
               bool save_multi_patch_alns) {
 
             auto q = unpatched.begin();
 
-            uint64_t query_delta = 0;
-            uint64_t target_delta = 0;
+            int64_t query_delta = 0;
+            int64_t target_delta = 0;
 
             bool got_alignment = false;
 
             // trim back small matches at the start
             erode_head(unpatched, query_start, target_start, 7);
 
-            uint64_t query_pos = query_start;
-            uint64_t target_pos = target_start;
+            int64_t query_pos = query_start;
+            int64_t target_pos = target_start;
 
             // Trim spurious matches off the tail of the alignment
             erode_tail(unpatched, query_end, target_end, 7);
@@ -1015,10 +1015,10 @@ void write_merged_alignment(
                     //std::cerr << std::endl;
                 } else {
                     // push back I and D to fill the gap
-                    for (uint64_t i = 0; i < query_start; ++i) {
+                    for (int64_t i = 0; i < query_start; ++i) {
                         patched.push_back('I');
                     }
-                    for (uint64_t i = 0; i < target_start; ++i) {
+                    for (int64_t i = 0; i < target_start; ++i) {
                         patched.push_back('D');
                     }
                 }
@@ -1329,10 +1329,10 @@ void write_merged_alignment(
 
                     // add in stuff if we didn't align
                     if (!got_alignment) {
-                        for (uint64_t i = 0; i < query_delta; ++i) {
+                        for (int64_t i = 0; i < query_delta; ++i) {
                             patched.push_back('I');
                         }
-                        for (uint64_t i = 0; i < target_delta; ++i) {
+                        for (int64_t i = 0; i < target_delta; ++i) {
                             patched.push_back('D');
                         }
                     }
@@ -1398,8 +1398,8 @@ void write_merged_alignment(
                     target_pos = target_length;
 
                     // Calculate new ends relative to the segment being aligned
-                    uint64_t new_query_end = query_length;
-                    uint64_t new_target_end = target_length + actual_extension;
+                    int64_t new_query_end = query_length;
+                    int64_t new_target_end = target_length + actual_extension;
 
                     if (query_offset + new_query_end > query_total_length || target_offset + new_target_end > target_total_length) {
                         std::cerr << "[wfmash::patch] Warning: Alignment extends beyond sequence bounds. Truncating." << std::endl;
@@ -1442,18 +1442,18 @@ void write_merged_alignment(
                         ++ok_alns;
                         if (query_end && aln.j > query_end) {
                             const int len = aln.j - query_end;
-                            for (uint64_t i = 0; i < len; ++i) {
+                            for (int64_t i = 0; i < len; ++i) {
                                 rawv.push_back('I');
                             }
                         }
                         if (target_end && aln.i > target_end) {
                             const int len = aln.i - target_end;
-                            for (uint64_t i = 0; i < len; ++i) {
+                            for (int64_t i = 0; i < len; ++i) {
                                 rawv.push_back('D');
                             }
                         }
-                        uint64_t target_aligned_length = 0;
-                        uint64_t query_aligned_length = 0;
+                        int64_t target_aligned_length = 0;
+                        int64_t query_aligned_length = 0;
                         const int start_idx = aln.edit_cigar.begin_offset;
                         const int end_idx = aln.edit_cigar.end_offset;
                         for (int i = start_idx; i < end_idx; i++) {
@@ -1512,9 +1512,9 @@ void write_merged_alignment(
 #endif
 
                 // erode by removing matches < k
-                for (uint64_t i = 0; i < rawv.size();) {
+                for (int64_t i = 0; i < rawv.size();) {
                     if (rawv[i] == 'M' || rawv[i] == 'X') {
-                        uint64_t j = i;
+                        int64_t j = i;
                         while (++j < rawv.size() &&
                                (rawv[j] == 'M' || rawv[j] == 'X')) {
                         }
@@ -1642,11 +1642,11 @@ void write_merged_alignment(
 #endif
 
     // trim deletions at start and end of tracev
-    uint64_t begin_offset;
-    uint64_t end_offset;
+    int64_t begin_offset;
+    int64_t end_offset;
     {
-        uint64_t trim_del_first;
-        uint64_t trim_del_last;
+        int64_t trim_del_first;
+        int64_t trim_del_last;
 
         // 1.) sort initial ins/del to put del < ins
         auto first_non_indel = tracev.begin();
@@ -1717,8 +1717,8 @@ query_start : query_end)
 
         const double scale = std::min(1.0, (double)wfplot_max_size / (double)std::max(v_max, h_max));
 
-        const uint64_t width = (int)(scale * (double)v_max);
-        const uint64_t height = (int)(scale * (double)h_max);
+        const int64_t width = (int)(scale * (double)v_max);
+        const int64_t height = (int)(scale * (double)h_max);
         const double source_width = (double)width;
         const double source_height = (double)height;
 
@@ -1744,8 +1744,8 @@ query_start : query_end)
                                                  source_min_x, source_min_y);
 
 
-            uint64_t v = query_start; // position in the pattern
-            uint64_t h = target_start; // position in the text
+            int64_t v = query_start; // position in the pattern
+            int64_t h = target_start; // position in the text
             int64_t last_v = -1;
             int64_t last_h = -1;
             for (const auto& c : tracev) {
@@ -1755,8 +1755,8 @@ query_start : query_end)
                         ++v;
                         ++h;
                         {
-                            uint64_t _v = v;
-                            uint64_t _h = h;
+                            int64_t _v = v;
+                            int64_t _h = h;
                             if ((_v != last_v && _h != last_h)
                                 && _v >= wfplot_vmin && _v <= wfplot_vmax
                                 && _h >= wfplot_hmin && _h <= wfplot_hmax) {
@@ -1806,7 +1806,7 @@ query_start : query_end)
             (double)(matches + mismatches + insertions + deletions);
 
     if (gap_compressed_identity >= min_identity) {
-        const uint64_t edit_distance = mismatches + inserted_bp + deleted_bp;
+        const int64_t edit_distance = mismatches + inserted_bp + deleted_bp;
 
         // identity over the full block
         const double block_identity =
@@ -1839,7 +1839,7 @@ query_start : query_end)
                             l_MD += last_len;
                             t_off += last_len;
                         } else if (last_op == 'X') {
-                            for (uint64_t ii = 0; ii < last_len; ++ii) {
+                            for (int64_t ii = 0; ii < last_len; ++ii) {
                                 out << l_MD
                                     << target[t_off + ii - target_pointer_shift];
                                 l_MD = 0;
@@ -1848,7 +1848,7 @@ query_start : query_end)
                             t_off += last_len;
                         } else if (last_op == 'D') {
                             out << l_MD << "^";
-                            for (uint64_t ii = 0; ii < last_len; ++ii) {
+                            for (int64_t ii = 0; ii < last_len; ++ii) {
                                 out << target[t_off + ii - target_pointer_shift];
                             }
 
@@ -1867,7 +1867,7 @@ query_start : query_end)
                 if (last_op == '=') {
                     out << last_len + l_MD;
                 } else if (last_op == 'X') {
-                    for (uint64_t ii = 0; ii < last_len; ++ii) {
+                    for (int64_t ii = 0; ii < last_len; ++ii) {
                         out << l_MD << target[t_off + ii - target_pointer_shift];
                         l_MD = 0;
                     }
@@ -1876,7 +1876,7 @@ query_start : query_end)
                     out << l_MD;
                 } else if (last_op == 'D') {
                     out << l_MD << "^";
-                    for (uint64_t ii = 0; ii < last_len; ++ii) {
+                    for (int64_t ii = 0; ii < last_len; ++ii) {
                         out << target[t_off + ii - target_pointer_shift];
                     }
                     out << "0";
@@ -1951,10 +1951,10 @@ query_start : query_end)
                 << "\t";
 
             // CIGAR
-            const uint64_t query_start_pos =
+            const int64_t query_start_pos =
                     query_offset +
                     (query_is_rev ? query_length - query_end : query_start);
-            const uint64_t query_end_pos =
+            const int64_t query_end_pos =
                     query_offset +
                     (query_is_rev ? query_length - query_start : query_end);
 
@@ -1978,7 +1978,7 @@ query_start : query_end)
             if (no_seq_in_sam) {
                 out << "*";
             } else {
-                for (uint64_t p = query_start; p < query_end; ++p) {
+                for (int64_t p = query_start; p < query_end; ++p) {
                     out << query[p];
                 }
             }
@@ -2093,14 +2093,14 @@ void write_tag_and_md_string(
                     l_MD += last_len;
                     t_off += last_len;
                 } else if (last_op == 'X') {
-                    for (uint64_t ii = 0; ii < last_len; ++ii) {
+                    for (int64_t ii = 0; ii < last_len; ++ii) {
                         out << l_MD << target[t_off + ii - target_pointer_shift];
                         l_MD = 0;
                     }
                     t_off += last_len;
                 } else if (last_op == 'D') {
                     out << l_MD << "^";
-                    for (uint64_t ii = 0; ii < last_len; ++ii) {
+                    for (int64_t ii = 0; ii < last_len; ++ii) {
                         out << target[t_off + ii - target_pointer_shift];
                     }
                     l_MD = 0;
@@ -2116,7 +2116,7 @@ void write_tag_and_md_string(
         if (last_op == '=' || last_op == 'M') {
             out << last_len + l_MD;
         } else if (last_op == 'X') {
-            for (uint64_t ii = 0; ii < last_len; ++ii) {
+            for (int64_t ii = 0; ii < last_len; ++ii) {
                 out << l_MD << target[t_off + ii - target_pointer_shift];
                 l_MD = 0;
             }
@@ -2125,7 +2125,7 @@ void write_tag_and_md_string(
             out << l_MD;
         } else if (last_op == 'D') {
             out << l_MD << "^";
-            for (uint64_t ii = 0; ii < last_len; ++ii) {
+            for (int64_t ii = 0; ii < last_len; ++ii) {
                 out << target[t_off + ii - target_pointer_shift];
             }
             out << "0";
@@ -2137,14 +2137,14 @@ void write_alignment_sam(
     std::ostream &out,
     const alignment_t& patch_aln,
     const std::string& query_name,
-    const uint64_t& query_total_length,
-    const uint64_t& query_offset,
-    const uint64_t& query_length,
+    const int64_t& query_total_length,
+    const int64_t& query_offset,
+    const int64_t& query_length,
     const bool& query_is_rev,
     const std::string& target_name,
-    const uint64_t& target_total_length,
-    const uint64_t& target_offset,
-    const uint64_t& target_length,
+    const int64_t& target_total_length,
+    const int64_t& target_offset,
+    const int64_t& target_length,
     const float& min_identity,
     const float& mashmap_estimated_identity,
     const bool& no_seq_in_sam,
@@ -2153,14 +2153,14 @@ void write_alignment_sam(
     const char* target,
     const int64_t& target_pointer_shift) {
 
-    uint64_t patch_matches = 0;
-    uint64_t patch_mismatches = 0;
-    uint64_t patch_insertions = 0;
-    uint64_t patch_inserted_bp = 0;
-    uint64_t patch_deletions = 0;
-    uint64_t patch_deleted_bp = 0;
-    uint64_t patch_refAlignedLength = 0;
-    uint64_t patch_qAlignedLength = 0;
+    int64_t patch_matches = 0;
+    int64_t patch_mismatches = 0;
+    int64_t patch_insertions = 0;
+    int64_t patch_inserted_bp = 0;
+    int64_t patch_deletions = 0;
+    int64_t patch_deleted_bp = 0;
+    int64_t patch_refAlignedLength = 0;
+    int64_t patch_qAlignedLength = 0;
 
     char* patch_cigar = wfa_alignment_to_cigar(
         &patch_aln.edit_cigar, patch_refAlignedLength, patch_qAlignedLength,
@@ -2173,9 +2173,9 @@ void write_alignment_sam(
         (double)(patch_matches + patch_mismatches + patch_inserted_bp + patch_deleted_bp);
 
     /*
-    const uint64_t query_start_pos =
+    const int64_t query_start_pos =
         (query_is_rev ? query_offset + query_length : query_offset);
-    const uint64_t query_end_pos =
+    const int64_t query_end_pos =
         (query_is_rev ? query_offset : query_offset + query_length);
     */
 
@@ -2193,7 +2193,7 @@ void write_alignment_sam(
             out << "*";
         } else {
             std::stringstream seq;
-            for (uint64_t p = patch_aln.j; p < patch_aln.j + patch_aln.query_length; ++p) {
+            for (int64_t p = patch_aln.j; p < patch_aln.j + patch_aln.query_length; ++p) {
                 seq << query[p];
             }
             if (patch_aln.is_rev) {
@@ -2228,14 +2228,14 @@ bool write_alignment_paf(
         std::ostream& out,
         const alignment_t& aln,
         const std::string& query_name,
-        const uint64_t& query_total_length,
-        const uint64_t& query_offset, // query offset on the forward strand
-        const uint64_t& query_length, // used to compute the coordinates for reversed alignments
+        const int64_t& query_total_length,
+        const int64_t& query_offset, // query offset on the forward strand
+        const int64_t& query_length, // used to compute the coordinates for reversed alignments
         const bool& query_is_rev, // if the base homology mapping is in the reverse complement orientation
         const std::string& target_name,
-        const uint64_t& target_total_length,
-        const uint64_t& target_offset,
-        const uint64_t& target_length, // unused
+        const int64_t& target_total_length,
+        const int64_t& target_offset,
+        const int64_t& target_length, // unused
         const float& min_identity,
         const float& mashmap_estimated_identity,
         const bool& with_endline,
@@ -2243,14 +2243,14 @@ bool write_alignment_paf(
     bool ret = false;  // return true if we wrote the alignment
 
     if (aln.ok) {
-        uint64_t matches = 0;
-        uint64_t mismatches = 0;
-        uint64_t insertions = 0;
-        uint64_t inserted_bp = 0;
-        uint64_t deletions = 0;
-        uint64_t deleted_bp = 0;
-        uint64_t refAlignedLength = 0;
-        uint64_t qAlignedLength = 0;
+        int64_t matches = 0;
+        int64_t mismatches = 0;
+        int64_t insertions = 0;
+        int64_t inserted_bp = 0;
+        int64_t deletions = 0;
+        int64_t deleted_bp = 0;
+        int64_t refAlignedLength = 0;
+        int64_t qAlignedLength = 0;
 
         char *cigar = wfa_alignment_to_cigar(
                 &aln.edit_cigar, refAlignedLength, qAlignedLength, matches,
@@ -2265,7 +2265,7 @@ bool write_alignment_paf(
                 (double)(matches + mismatches + inserted_bp + deleted_bp);
 
         if (gap_compressed_identity >= min_identity) {
-            uint64_t q_start, q_end;
+            int64_t q_start, q_end;
             if (query_is_rev) {
                 q_start = query_offset + (query_length - aln.j - qAlignedLength);
                 q_end = query_offset + (query_length - aln.j);

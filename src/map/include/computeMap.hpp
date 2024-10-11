@@ -287,8 +287,8 @@ namespace skch
 		}
 
 		// Count the total number of sequences and sequence length
-		uint64_t total_seqs = 0;
-		uint64_t total_seq_length = 0;
+		int64_t total_seqs = 0;
+		int64_t total_seq_length = 0;
 		for (const auto& fileName : param.querySequences) {
 			// Check if there is a .fai file
 			std::string fai_name = fileName + ".fai";
@@ -476,7 +476,7 @@ namespace skch
                              [&](MappingResult &e){
                                  int64_t q_l = (int64_t)e.queryEndPos - (int64_t)e.queryStartPos;
                                  int64_t r_l = (int64_t)e.refEndPos - (int64_t)e.refStartPos;
-                                 uint64_t delta = std::abs(r_l - q_l);
+                                 int64_t delta = std::abs(r_l - q_l);
                                  double len_id_bound = (1.0 - (double)delta/(((double)q_l+r_l)/2));
                                  return len_id_bound < std::min(0.7, std::pow(param.percentageIdentity,3));
                              }),
@@ -511,7 +511,7 @@ namespace skch
        */
       void sparsifyMappings(MappingResultsVector_t &readMappings)
       {
-          if (param.sparsity_hash_threshold < std::numeric_limits<uint64_t>::max()) {
+          if (param.sparsity_hash_threshold < std::numeric_limits<int64_t>::max()) {
               readMappings.erase(
                   std::remove_if(readMappings.begin(),
                                  readMappings.end(),

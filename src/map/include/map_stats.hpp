@@ -184,7 +184,7 @@ namespace skch
         int alphabetSize, 
         float identity,
         int64_t lengthQuery, 
-        uint64_t lengthReference, 
+        int64_t lengthReference, 
         float confidence_interval)
     {
       //total space size of k-mers
@@ -238,7 +238,7 @@ namespace skch
         int alphabetSize,
         float identity,
         int64_t segmentLength, 
-        uint64_t lengthReference)
+        int64_t lengthReference)
     {
       int64_t lengthQuery = segmentLength - k;
 

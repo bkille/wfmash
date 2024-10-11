@@ -500,7 +500,7 @@ sequences shorter than segment length will be ignored", ArgvParser::OptionRequir
     str.clear();
 
     if (cmd.foundOption("numMappingsForSegment")) {
-      uint32_t n;
+      int32_t n;
       str << cmd.optionValue("numMappingsForSegment");
       str >> n;
       if (n > 0) {
@@ -515,7 +515,7 @@ sequences shorter than segment length will be ignored", ArgvParser::OptionRequir
     str.clear();
 
     if (cmd.foundOption("numMappingsForShortSeq")) {
-      uint32_t n;
+      int32_t n;
       str << cmd.optionValue("numMappingsForShortSeq");
       str >> n;
       if (n > 0) {
@@ -591,14 +591,14 @@ sequences shorter than segment length will be ignored", ArgvParser::OptionRequir
       str >> frac;
       if (frac == 1) {
           // overflows
-          parameters.sparsity_hash_threshold = std::numeric_limits<uint64_t>::max();
+          parameters.sparsity_hash_threshold = std::numeric_limits<int64_t>::max();
       } else {
           parameters.sparsity_hash_threshold
-              = frac * std::numeric_limits<uint64_t>::max();
+              = frac * std::numeric_limits<int64_t>::max();
       }
     } else {
         parameters.sparsity_hash_threshold
-            = std::numeric_limits<uint64_t>::max();
+            = std::numeric_limits<int64_t>::max();
     }
     str.clear();
 

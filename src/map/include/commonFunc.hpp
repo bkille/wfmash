@@ -506,7 +506,7 @@ namespace skch {
             }
 
             // Add remaining open minmer windows
-            uint64_t rank = 1;
+            int64_t rank = 1;
             auto iter = sortedWindow.begin();
             while (iter != sortedWindow.end() && rank <= sketchSize) 
             {
@@ -588,15 +588,15 @@ namespace skch {
          * @param[in] refSequences  vector of reference files
          * @return                  total size
          */
-        inline uint64_t getReferenceSize(const std::vector<std::string> &refSequences) {
-            uint64_t count = 0;
+        inline int64_t getReferenceSize(const std::vector<std::string> &refSequences) {
+            int64_t count = 0;
 
             for (auto &f : refSequences) {
                 //Open the file as binary, and set the position to end
                 std::ifstream in(f, std::ifstream::ate | std::ifstream::binary);
 
                 //the position of the current character
-                count += (uint64_t) (in.tellg());
+                count += (int64_t) (in.tellg());
             }
 
             return count;

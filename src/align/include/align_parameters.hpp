@@ -23,7 +23,7 @@ struct Parameters {
     bool split;                                       //Split read mapping (done if this is true)
 
     //wflambda
-    uint16_t wflambda_segment_length;             //segment length for wflambda
+    int16_t wflambda_segment_length;             //segment length for wflambda
 
     bool force_biwfa_alignment;				   //force biwfa alignment
 
@@ -44,8 +44,8 @@ struct Parameters {
     float wflign_max_mash_dist;
     int wflign_min_wavefront_length;
     int wflign_max_distance_threshold;
-    uint64_t wflign_max_len_major;
-    uint64_t wflign_max_len_minor;
+    int64_t wflign_max_len_major;
+    int64_t wflign_max_len_minor;
     int wflign_erode_k;
     int kmerSize;                                 //kmer size for pre-checking before aligning a fragment
     int64_t chain_gap;                            //max distance for 2d range union-find mapping chaining;

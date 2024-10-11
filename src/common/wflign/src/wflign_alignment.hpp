@@ -100,43 +100,43 @@ bool validate_cigar(
         const wflign_cigar_t& cigar,
         const char* query,
         const char* target,
-        const uint64_t& query_aln_len,
-        const uint64_t& target_aln_len,
-        uint64_t j,
-        uint64_t i);
+        const int64_t& query_aln_len,
+        const int64_t& target_aln_len,
+        int64_t j,
+        int64_t i);
 bool validate_trace(
         std::vector<char>& tracev,
         const char* query,
         const char* target,
-        const uint64_t& query_aln_len,
-        const uint64_t& target_aln_len,
-        uint64_t j,
-        uint64_t i);
+        const int64_t& query_aln_len,
+        const int64_t& target_aln_len,
+        int64_t j,
+        int64_t i);
 /*
  * Alignment-CIGAR Adaptors
  */
 char* alignment_to_cigar(
         const std::vector<char>& edit_cigar,
-        const uint64_t& start_idx,
-        const uint64_t& end_idx,
-        uint64_t& target_aligned_length,
-        uint64_t& query_aligned_length,
-        uint64_t& matches,
-        uint64_t& mismatches,
-        uint64_t& insertions,
-        uint64_t& inserted_bp,
-        uint64_t& deletions,
-        uint64_t& deleted_bp);
+        const int64_t& start_idx,
+        const int64_t& end_idx,
+        int64_t& target_aligned_length,
+        int64_t& query_aligned_length,
+        int64_t& matches,
+        int64_t& mismatches,
+        int64_t& insertions,
+        int64_t& inserted_bp,
+        int64_t& deletions,
+        int64_t& deleted_bp);
 char* wfa_alignment_to_cigar(
         const wflign_cigar_t* const edit_cigar,
-        uint64_t& target_aligned_length,
-        uint64_t& query_aligned_length,
-        uint64_t& matches,
-        uint64_t& mismatches,
-        uint64_t& insertions,
-        uint64_t& inserted_bp,
-        uint64_t& deletions,
-        uint64_t& deleted_bp);
+        int64_t& target_aligned_length,
+        int64_t& query_aligned_length,
+        int64_t& matches,
+        int64_t& mismatches,
+        int64_t& insertions,
+        int64_t& inserted_bp,
+        int64_t& deletions,
+        int64_t& deleted_bp);
 /*
  * Utils
  */
@@ -144,10 +144,10 @@ bool unpack_display_cigar(
         const wflign_cigar_t& cigar,
         const char* query,
         const char* target,
-        const uint64_t query_aln_len,
-        const uint64_t target_aln_len,
-        uint64_t j,
-        uint64_t i);
+        const int64_t query_aln_len,
+        const int64_t target_aln_len,
+        int64_t j,
+        int64_t i);
 void wflign_edit_cigar_copy(
         wfa::WFAligner& wf_aligner,
         wflign_cigar_t* const cigar_dst);
